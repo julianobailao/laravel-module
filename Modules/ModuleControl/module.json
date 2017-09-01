@@ -1,0 +1,16 @@
+{
+    "name": "ModuleControl",
+    "alias": "modulecontrol",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\ModuleControl\\Providers\\ModuleControlServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "start.php"
+    ],
+    "requires": []
+}

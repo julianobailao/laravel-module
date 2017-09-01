@@ -11,5 +11,7 @@ class Action extends Model
 
     public $incrementing = false;
 
-    protected $fillable = [];
+    protected $fillable = [
+        'title', 'description'
+    ];
 }

@@ -2,7 +2,7 @@
 
 namespace Modules\ModuleControl\Http\Controllers;
 
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 use Modules\ModuleControl\Facades\Module;
 
 class ModuleControlController extends Controller

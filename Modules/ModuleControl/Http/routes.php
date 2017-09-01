@@ -7,8 +7,8 @@ Route::group([
     // Display a listing of modules.
     Route::get('/modules', 'ModuleControlController@index');
 
-    // Display a listing of actions.
-    Route::get('/modules/actions', 'ActionController@index');
+    // Actions resource controller.
+    Route::resource('/modules/actions', 'ActionController', ['except' => ['create', 'edit']]);
 
     // Display a specified module data by path.
     Route::get('/modules/{path}', 'ModuleControlController@show');

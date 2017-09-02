@@ -37,10 +37,17 @@ class ActionControllerTest extends TestCase
     public function testCreateNewActionAndReturnActionData()
     {
         $data = factory(Action::class)->make();
+        $data->rules = [
+            [
+                'module_name' => 'ModuleControl',
+                'route_uri' => 'modules',
+                'route_method' => 'GET',
+            ],
+        ];
         $response = $this->json('POST', '/modules/actions', $data->toArray());
 
         $response
-            ->assertStatus(200)
+            ->assertStatus(201)
             ->assertJson($data->toArray());
     }
 
@@ -48,11 +55,18 @@ class ActionControllerTest extends TestCase
     {
         $action = factory(Action::class)->create();
         $data = factory(Action::class)->make();
+        $data->rules = [
+            [
+                'module_name' => 'ModuleControl',
+                'route_uri' => 'modules',
+                'route_method' => 'GET',
+            ],
+        ];
         $response = $this->json('PUT', sprintf('/modules/actions/%s', $action->id), $data->toArray());
 
         $response
             ->assertStatus(200)
-            ->assertJson($data->toArray());
+            ->assertJsonFragment(Action::find($action->id)->load('rules')->toArray());
     }
 
     public function testDestroyActionAndCheckDatabase()

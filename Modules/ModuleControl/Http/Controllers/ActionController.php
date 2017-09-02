@@ -5,7 +5,7 @@ namespace Modules\ModuleControl\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Modules\ModuleControl\Entities\Action;
-use odules\ModuleControl\Http\Request\ActionRequest;
+use Modules\ModuleControl\Http\Requests\ActionRequest;
 
 class ActionController extends Controller
 {
@@ -29,9 +29,11 @@ class ActionController extends Controller
      * @param  Action $action
      * @return Response
      */
-    public function show(Action $action)
+    public function show(Action $action, $httpStatusCode = 200)
     {
-        return response()->json($action);
+        $action->load('rules');
+
+        return response()->json($action, $httpStatusCode);
     }
 
     /**
@@ -66,10 +68,17 @@ class ActionController extends Controller
      */
     private function save(Action $action, ActionRequest $request)
     {
-        $action->create($request->only('title', 'description'));
-        $action->roles()->attach($request->only('roles'));
+        $update = $action->id != null;
+        $action->fill($request->only('title', 'description'))->save();
+        // save action rules
+        $rules = collect($request->json('rules'))
+            ->each(function ($rule) use ($action) {
+                $action
+                    ->rules()
+                    ->updateOrCreate($rule);
+            });
 
-        return $this->show($action);
+        return $this->show($action, $update === true ? 200 : 201);
     }
 
     /**

@@ -26,6 +26,6 @@ class ValidModuleName implements Rule
      */
     public function message()
     {
-        return ':attribute is invalid.';
+        return ':attribute not is a valida module name.';
     }
 }

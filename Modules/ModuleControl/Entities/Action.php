@@ -23,4 +23,9 @@ class Action extends Model
 
         return $query;
     }
+
+    public function rules()
+    {
+        return $this->hasMany(ActionRule::class);
+    }
 }

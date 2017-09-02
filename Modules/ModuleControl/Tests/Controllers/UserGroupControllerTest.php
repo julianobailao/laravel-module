@@ -6,14 +6,14 @@ use Tests\TestCase;
 use Modules\ModuleControl\Entities\Action;
 use Modules\ModuleControl\Traits\ModuleDatabaseMigrations;
 
-class ActionControllerTest extends TestCase
+class UserGroupControllerTest extends TestCase
 {
     use ModuleDatabaseMigrations;
 
     public function testReturnActionList()
     {
-        $data = factory(Action::class, 10)->create();
-        $response = $this->get('/modules/actions');
+        $data = factory(UserGroup::class, 10)->create();
+        $response = $this->get('/user-groups');
 
         $response
             ->assertStatus(200)

@@ -1,9 +1,9 @@
 <?php
 
 use Faker\Generator as Faker;
-use Modules\ModuleControl\Entities\Action;
+use Modules\ModuleControl\Entities\UserGroup;
 
-$factory->define(Action::class, function (Faker $faker) {
+$factory->define(UserGroup::class, function (Faker $faker) {
     return [
         'title' => $faker->name,
         'description' => $faker->name,

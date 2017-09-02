@@ -19,11 +19,7 @@ class ActionControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
-                    '*' => [
-                        'id',
-                        'title',
-                        'description',
-                    ],
+                    '*' => array_keys($data->first()->toArray()),
                 ],
             ]);
     }

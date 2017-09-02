@@ -14,4 +14,13 @@ class Action extends Model
     protected $fillable = [
         'title', 'description'
     ];
+
+    public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            $query->where('title', 'like', sprintf('%%s%', $term));
+        }
+
+        return $query;
+    }
 }

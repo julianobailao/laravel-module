@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActionRoutesTable extends Migration
+class CreateActionRulesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateActionRoutesTable extends Migration
      */
     public function up()
     {
-        Schema::create('action_routes', function (Blueprint $table) {
+        Schema::create('action_rules', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->uuid('action_id')->unsigned();
             $table->string('module_name');
@@ -39,6 +39,6 @@ class CreateActionRoutesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('action_routes');
+        Schema::dropIfExists('action_rules');
     }
 }

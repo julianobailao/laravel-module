@@ -40,26 +40,34 @@ class ModuleService
      * Get module data from path, case exists.
      *
      * @param string $path
-     *
      * @return mixed
      */
     public function getModuleByPath($path)
     {
-        if (! File::exists($directory = sprintf('%s/%s', $this->modulePath, $path))) {
+        if (! $this->checkModuleExists($path)) {
             return false;
         }
 
+        $directory = sprintf('%s/%s', $this->modulePath, $path);
         $module = json_decode(File::get(sprintf('%s/module.json', $directory)));
         $module->routes = $this->getModuleRoutes($path);
 
         return $module;
     }
 
+    public function checkModuleExists($path)
+    {
+        if (! File::exists(sprintf('%s/%s', $this->modulePath, $path))) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Get module routes, by module name.
      *
      * @param string $moduleName
-     *
      * @return \Illuminate\Support\Collection
      */
     public function getModuleRoutes($moduleName)

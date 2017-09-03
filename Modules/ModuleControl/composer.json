@@ -1,10 +1,10 @@
 {
     "name": "nwidart/modulecontrol",
-    "description": "",
+    "description": "A module to control actions, users and permissions.",
     "authors": [
         {
-            "name": "Nicolas Widart",
-            "email": "n.widart@gmail.com"
+            "name": "Juliano Bailão",
+            "email": "julianobailao@gmail.com"
         }
     ],
     "autoload": {

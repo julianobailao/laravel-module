@@ -70,7 +70,7 @@ class ActionController extends Controller
     {
         $update = $action->id != null;
         $action->fill($request->only('title', 'description'))->save();
-        // save action rules
+        $action->rules()->delete();
         $rules = collect($request->json('rules'))
             ->each(function ($rule) use ($action) {
                 $action

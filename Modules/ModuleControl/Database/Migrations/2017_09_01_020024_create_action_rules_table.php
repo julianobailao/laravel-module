@@ -15,13 +15,12 @@ class CreateActionRulesTable extends Migration
     {
         Schema::create('action_rules', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->uuid('action_id')->unsigned();
+            $table->uuid('action_id');
             $table->string('module_name');
             $table->string('route_uri');
             $table->string('route_method');
 
             $table->timestamps();
-            $table->softDeletes();
 
             $table->foreign('action_id')
                 ->references('id')->on('actions')->onDelete('cascade');

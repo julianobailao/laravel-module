@@ -4,13 +4,14 @@ namespace Modules\ModuleControl\Tests\Controllers;
 
 use Tests\TestCase;
 use Modules\ModuleControl\Entities\Action;
+use Modules\ModuleControl\Entities\UserGroup;
 use Modules\ModuleControl\Traits\ModuleDatabaseMigrations;
 
 class UserGroupControllerTest extends TestCase
 {
     use ModuleDatabaseMigrations;
 
-    public function testReturnActionList()
+    public function testReturnUserGroupList()
     {
         $data = factory(UserGroup::class, 10)->create();
         $response = $this->get('/user-groups');
@@ -24,57 +25,54 @@ class UserGroupControllerTest extends TestCase
             ]);
     }
 
-    public function testReturnEspecifiedActionbyUuid()
+    public function testReturnEspecifiedUserGroupbyUuid()
     {
-        $data = factory(Action::class)->create();
-        $response = $this->get(sprintf('/modules/actions/%s', $data->id));
+        $data = factory(UserGroup::class)->create();
+        $response = $this->get(sprintf('/user-groups/%s', $data->id));
 
         $response
             ->assertStatus(200)
             ->assertJson($data->toArray());
     }
 
-    public function testCreateNewActionAndReturnActionData()
+    public function testCreateNewUserGroupAndReturnUserGroupData()
     {
-        $data = factory(Action::class)->make();
-        $data->rules = [
+        $data = factory(UserGroup::class)->make();
+        $data->permissions = [
             [
-                'module_name' => 'ModuleControl',
-                'route_uri' => 'modules',
-                'route_method' => 'GET',
+                'action_id' => factory(Action::class)->create()->id,
             ],
         ];
-        $response = $this->json('POST', '/modules/actions', $data->toArray());
+        $response = $this->json('POST', '/user-groups', $data->toArray());
+        unset($data->permissions);
 
         $response
             ->assertStatus(201)
-            ->assertJson($data->toArray());
+            ->assertJsonFragment($data->toArray());
     }
 
-    public function testUpdateActionAndReturnActionData()
+    public function testUpdateUserGroupAndReturnUserGroupData()
     {
-        $action = factory(Action::class)->create();
-        $data = factory(Action::class)->make();
-        $data->rules = [
-            [
-                'module_name' => 'ModuleControl',
-                'route_uri' => 'modules',
-                'route_method' => 'GET',
-            ],
-        ];
-        $response = $this->json('PUT', sprintf('/modules/actions/%s', $action->id), $data->toArray());
+        $userGroup = factory(UserGroup::class)->create();
+        $data = factory(UserGroup::class)->make();
+        // $data->permissions = [
+        //     [
+        //         'action_id' => factory(Action::class)->create()->id,
+        //     ],
+        // ];
+        $response = $this->json('PUT', sprintf('/user-groups/%s', $userGroup->id), $data->toArray());
 
         $response
             ->assertStatus(200)
-            ->assertJsonFragment(Action::find($action->id)->load('rules')->toArray());
+            ->assertJsonFragment(UserGroup::find($userGroup->id)->load('permissions')->toArray());
     }
 
-    public function testDestroyActionAndCheckDatabase()
+    public function testDestroyUserGroupAndCheckDatabase()
     {
-        $action = factory(Action::class)->create();
-        $response = $this->json('DELETE', sprintf('/modules/actions/%s', $action->id));
+        $userGroup = factory(UserGroup::class)->create();
+        $response = $this->json('DELETE', sprintf('/user-groups/%s', $userGroup->id));
 
         $response->assertStatus(204);
-        $this->assertEquals(null, Action::find($action->id));
+        $this->assertEquals(null, UserGroup::find($userGroup->id));
     }
 }

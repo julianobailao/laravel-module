@@ -7,7 +7,7 @@ use Modules\ModuleControl\Rules\ValidRouteUri;
 use Modules\ModuleControl\Rules\ValidModuleName;
 use Modules\ModuleControl\Rules\ValidRouteMethod;
 
-class ActionRequest extends FormRequest
+class UserGroupRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -18,22 +18,11 @@ class ActionRequest extends FormRequest
     {
         return [
             'title' => sprintf(
-                'required|unique:actions,title,%s,id',
-                isset($this->action->id) ? $this->action->id : 0
+                'required|unique:user_groups,title,%s,id',
+                isset($this->userGroup->id) ? $this->userGroup->id : 0
             ),
-            'rules' => 'required|array|min:1',
-            'rules.*.module_name' => [
-                'required',
-                new ValidModuleName()
-            ],
-            'rules.*.route_uri' => [
-                'required',
-                new ValidRouteUri()
-            ],
-            'rules.*.route_method' => [
-                'required',
-                new ValidRouteMethod()
-            ]
+            'permissions' => 'required|array|min:1',
+            'permissions.*.action_id' => 'required|exists:actions,id',
         ];
     }
 

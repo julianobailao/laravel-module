@@ -31,6 +31,8 @@ class UserGroupController extends Controller
      */
     public function show(UserGroup $userGroup, $httpStatusCode = 200)
     {
+        $userGroup->load('permissions');
+
         return response()->json($userGroup, $httpStatusCode);
     }
 
@@ -68,6 +70,8 @@ class UserGroupController extends Controller
     {
         $update = $userGroup->id != null;
         $userGroup->fill($request->only('title', 'description'))->save();
+        $userGroup->permissions()->detach();
+        $userGroup->permissions()->attach($request->json('permissions'));
 
         return $this->show($userGroup, $update === true ? 200 : 201);
     }

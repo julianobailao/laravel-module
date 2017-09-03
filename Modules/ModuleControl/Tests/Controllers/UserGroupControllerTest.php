@@ -3,6 +3,7 @@
 namespace Modules\ModuleControl\Tests;
 
 use Tests\TestCase;
+use Modules\ModuleControl\Entities\Action;
 use Modules\ModuleControl\Entities\UserGroup;
 use Modules\ModuleControl\Traits\ModuleDatabaseMigrations;
 
@@ -37,22 +38,33 @@ class UserGroupControllerTest extends TestCase
     public function testCreateNewUserGroupAndReturnUserGroupData()
     {
         $data = factory(UserGroup::class)->make();
+        $data->permissions = [
+            [
+                'action_id' => factory(Action::class)->create()->id,
+            ],
+        ];
         $response = $this->json('POST', '/user-groups', $data->toArray());
+        unset($data->permissions);
 
         $response
             ->assertStatus(201)
-            ->assertJson($data->toArray());
+            ->assertJsonFragment($data->toArray());
     }
 
     public function testUpdateUserGroupAndReturnUserGroupData()
     {
         $userGroup = factory(UserGroup::class)->create();
         $data = factory(UserGroup::class)->make();
+        // $data->permissions = [
+        //     [
+        //         'action_id' => factory(Action::class)->create()->id,
+        //     ],
+        // ];
         $response = $this->json('PUT', sprintf('/user-groups/%s', $userGroup->id), $data->toArray());
 
         $response
             ->assertStatus(200)
-            ->assertJsonFragment(UserGroup::find($userGroup->id)->toArray());
+            ->assertJsonFragment(UserGroup::find($userGroup->id)->load('permissions')->toArray());
     }
 
     public function testDestroyUserGroupAndCheckDatabase()

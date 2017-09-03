@@ -21,7 +21,7 @@ class ActionRequest extends FormRequest
                 'required|unique:actions,title,%s,id',
                 isset($this->action->id) ? $this->action->id : 0
             ),
-            'rules' => 'array|min:1',
+            'rules' => 'required|array|min:1',
             'rules.*.module_name' => [
                 'required',
                 new ValidModuleName()

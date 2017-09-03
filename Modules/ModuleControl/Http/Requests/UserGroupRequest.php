@@ -21,6 +21,8 @@ class UserGroupRequest extends FormRequest
                 'required|unique:user_groups,title,%s,id',
                 isset($this->userGroup->id) ? $this->userGroup->id : 0
             ),
+            'permissions' => 'required|array|min:1',
+            'permissions.*.action_id' => 'required|exists:actions,id',
         ];
     }
 

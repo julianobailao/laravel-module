@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\ModuleControl\Tests;
+namespace Modules\ModuleControl\Tests\Controllers;
 
 use Tests\TestCase;
 use Modules\ModuleControl\Entities\Action;

@@ -9,8 +9,18 @@
         "Modules\\ModuleControl\\Providers\\ModuleControlServiceProvider"
     ],
     "aliases": {},
+    "configs": {
+        "auth.providers.users.model": "Teste33"
+    },
+    "scripts": [
+        "php artisan vendor:publish --provider=\"Tymon\\JWTAuth\\Providers\\JWTAuthServiceProvider\"",
+        "php artisan jwt:generate"
+    ],
     "files": [
         "start.php"
     ],
-    "requires": []
+    "requires": {
+        "offline/laravel-config-writer": "1.*",
+        "tymon/jwt-auth": "0.5.*"
+    }
 }

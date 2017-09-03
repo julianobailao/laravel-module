@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserGroupPermission extends Model
 {
-	public $table = 'user_group_permissions';
-
     protected $primaryKey = null;
     public $incrementing = false;
 

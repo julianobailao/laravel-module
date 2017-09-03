@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActionsTable extends Migration
+class CreateUserGroupPermissionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateActionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('actions', function (Blueprint $table) {
+        Schema::create('user_group_permissions', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->uuid('id');
-            $table->string('title');
-            $table->text('description')->nullable();
+            $table->uuid('user_group_id');
+            $table->uuid('action_id');
 
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->primary('id');
+            $table->unique([
+                'user_group_id', 'action_id'
+            ]);
         });
     }
 
@@ -33,6 +31,6 @@ class CreateActionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('actions');
+        Schema::dropIfExists('user_group_permissions');
     }
 }

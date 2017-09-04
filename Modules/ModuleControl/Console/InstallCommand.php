@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Modules\ModuleControl\Facades\ConfigOverride;
 use Symfony\Component\Console\Input\InputArgument;
 
-// TODO create a way to user confirm the module changes in configuration files.
+// TODO refact this class.
 class InstallCommand extends Command
 {
     /**
@@ -78,13 +78,22 @@ class InstallCommand extends Command
             return $this->line('-- No configurations to publish');
         }
 
-        $this->line('Publishing configurations');
-        $this->line(PHP_EOL);
+        $this->info('This modules need to change your configurations'.PHP_EOL);
+        $this->line('Required configurations:');
         $configurations->each(function ($value, $config) {
-            ConfigOverride::write($config, $value);
+            $this->line('    '.$config.' => '.$value);
         });
 
-        return $this;
+        if ($this->confirm('Do you allow these changes?')) {
+
+            $this->line('Publishing configurations');
+            $this->line(PHP_EOL);
+            $configurations->each(function ($value, $config) {
+                ConfigOverride::write($config, $value);
+            });
+
+            return $this;
+        }
     }
 
     private function runScripts(Collection $scripts)

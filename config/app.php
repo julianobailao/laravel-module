@@ -184,6 +184,11 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
 
     ],
 
@@ -236,6 +241,11 @@ return [
         'Module' => Nwidart\Modules\Facades\Module::class,
         'Uuid' => Webpatser\Uuid\Uuid::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,

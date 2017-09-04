@@ -10,7 +10,11 @@
     ],
     "aliases": {},
     "configs": {
-        "auth.providers.users.model": "Teste33"
+        "app.providers": "Tymon\\JWTAuth\\Providers\\JWTAuthServiceProvider::class",
+        "app.aliases": "'JWTAuth' => Tymon\\JWTAuth\\Facades\\JWTAuth::class",
+        "app.aliases": "'JWTFactory' => Tymon\\JWTAuth\\Facades\\JWTFactory::class",
+        "auth.providers.users.model": "Modules\\ModuleControl\\Entities\\User::class",
+        "jwt.user": "Modules\\ModuleControl\\Entities\\User"
     },
     "scripts": [
         "php artisan vendor:publish --provider=\"Tymon\\JWTAuth\\Providers\\JWTAuthServiceProvider\"",
@@ -20,7 +24,6 @@
         "start.php"
     ],
     "requires": {
-        "offline/laravel-config-writer": "1.*",
         "tymon/jwt-auth": "0.5.*"
     }
 }

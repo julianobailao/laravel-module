@@ -4,160 +4,189 @@ namespace Modules\ModuleControl\Services;
 
 use File;
 
+// TODO Refact this class
 class ConfigOverrideService
 {
-    public function write($file, $indexes, $value)
+    /**
+     * Write a config value in a specified config file.
+     *
+     * @param  string $indexes
+     * @param  mixed $value
+     * @return self
+     */
+    public function write($indexes, $value)
     {
-        // $configData = \Config::get($file);
-        // $this->array_set_value($configData, implode('.', $indexes), $value);
-
-        $filePath = config_path(sprintf('%s.php', $file));
+        $payload = explode('.', $indexes);
+        $filePath = config_path(sprintf('%s.php', array_shift($payload)));
         $data = File::get($filePath);
-        $contents = $this->parseContent($data, ['providers.users.model' => $value]);
-        file_put_contents('teste_config.php', $contents);
-    }
 
-    protected function array_set_value(array &$array, $parents, $value, $glue = '.')
-    {
-        if (!is_array($parents)) {
-            $parents = explode($glue, (string) $parents);
+        if ($indexes == 'app.providers' || $indexes == 'app.aliases') {
+            $contents = $this->attachContent($data, implode('.', $payload), $value);
+        } else {
+            $contents = $this->parseContent($data, [implode('.', $payload) => $value]);
         }
 
-        $ref = &$array;
-
-        foreach ($parents as $parent) {
-            if (isset($ref) && !is_array($ref)) {
-                $ref = [];
-            }
-
-            $ref = &$ref[$parent];
-        }
-
-        $ref = $value;
+        File::put($filePath, $contents);
 
         return $this;
     }
 
-    public function toContent($contents, $newValues, $useValidation = true)
+    private function attachContent($contents, $key, $value)
     {
-        $contents = $this->parseContent($contents, $newValues);
+        // TODO Providers and Alias must be added case not exist, or replaced.
+        $lines = explode("\n", $contents);
+        $index = null;
+        $locked = false;
 
-        if ($useValidation) {
-            $result = eval('?>'.$contents);
 
-                foreach ($newValues as $key => $expectedValue) {
-                    $parts = explode('.', $key);
+        foreach ($lines as $lineKey => $line) {
+            if (strpos($line, "'" . $key . "' => [") !== false) {
+                $locked = true;
+            }
 
-                    $array = $result;
-                    foreach ($parts as $part) {
-                        if (!is_array($array) || !array_key_exists($part, $array))
-                            throw new Exception(sprintf('Unable to rewrite key "%s" in config, does it exist?', $key));
-
-                        $array = $array[$part];
-                    }
-                    $actualValue = $array;
-
-                if ($actualValue != $expectedValue)
-                    throw new Exception(sprintf('Unable to rewrite key "%s" in config, rewrite failed', $key));
+            if ($locked === true && strpos($line, "]") && $index == null) {
+                $index = $lineKey - 1;
             }
         }
 
-        return $contents;
+        return implode("\n", array_merge(
+            array_slice($lines, 0, $index, true),
+            [$index => '        '.$value.','],
+            array_slice($lines, $index, count($lines) - 1, true)
+        ));
     }
 
+    /**
+     * Parse the config file content.
+     *
+     * @param  string $contents
+     * @param  mixed $newValues
+     * @return string
+     */
     private function parseContent($contents, $newValues)
     {
-        $patterns = array();
-        $replacements = array();
+        $patterns = [];
+        $replacements = [];
 
         foreach ($newValues as $path => $value) {
             $items = explode('.', $path);
             $key = array_pop($items);
 
-            if (is_string($value) && strpos($value, "'") === false) {
-                $replaceValue = "'".$value."'";
-            } elseif (is_string($value) && strpos($value, '"') === false) {
-                $replaceValue = '"'.$value.'"';
-            } elseif (is_bool($value)) {
-                $replaceValue = ($value ? 'true' : 'false');
-            } elseif (is_null($value)) {
-                $replaceValue = 'null';
-            } else {
-                $replaceValue = $value;
-            }
+            $replaceValue = $this->formatValue($value);
 
             $patterns[] = $this->buildStringExpression($key, $items);
             $replacements[] = '${1}${2}'.$replaceValue;
 
-            $patterns[] = $this->buildStringExpression($key, $items, '"');
+            $patterns[] = $this->buildStringExpression($key, $items, '"', strpos($replaceValue, '::class'));
             $replacements[] = '${1}${2}'.$replaceValue;
 
             $patterns[] = $this->buildConstantExpression($key, $items);
             $replacements[] = '${1}${2}'.$replaceValue;
         }
 
-        dd(preg_replace($patterns, $replacements, $contents, 1), $patterns, $replacements);
-        dd(preg_replace($patterns, $replacements, $contents, 1));
-
         return preg_replace($patterns, $replacements, $contents, 1);
     }
 
-    private function buildStringExpression($targetKey, $arrayItems = array(), $quoteChar = "'")
-    {
-        $expression = array();
 
-        // Opening expression for array items ($1)
+    /**
+     * Format value by type.
+     *
+     * @param  mixed $value
+     * @return string
+     */
+    private function formatValue($value)
+    {
+        if (is_string($value) && strpos($value, "'") === false && strpos($value, '::class') === false) {
+            return "'".$value."'";
+        }
+
+        if (is_string($value) && strpos($value, '"') === false && strpos($value, '::class') === false) {
+            return '"'.$value.'"';
+        }
+
+        if (is_bool($value)) {
+            return ($value ? 'true' : 'false');
+        }
+
+        if (is_null($value)) {
+            return 'null';
+        }
+
+        return $value;
+    }
+
+    /**
+     * Build regex from string expressions.
+     *
+     * @param  string  $targetKey
+     * @param  array   $arrayItems
+     * @param  string  $quoteChar
+     * @param  boolean $namespace
+     * @return string
+     */
+    private function buildStringExpression($targetKey, $arrayItems = [], $quoteChar = "'", $namespace = false)
+    {
+        $expression = [];
         $expression[] = $this->buildArrayOpeningExpression($arrayItems);
 
-        // The target key opening
-        $expression[] = '([\'|"]'.$targetKey.'[\'|"]\s*=>\s*)['.$quoteChar.']';
+        if ($namespace === false) {
+            $expression[] = '([\'|"]'.$targetKey.'[\'|"]\s*=>\s*)['.$quoteChar.']';
+            $expression[] = '([^'.$quoteChar.']*)';
+            $expression[] = '['.$quoteChar.']';
 
-        // The target value to be replaced ($2)
-        $expression[] = '([^'.$quoteChar.']*)';
+            return $this->formatExpression($expression);
+        }
 
-        // The target key closure
-        $expression[] = '['.$quoteChar.']';
+        $expression[] = '([>]\s)(?:([aA][pP][pP])*?)[^\']*(?:[:][:][c][l][a][s]{2}\*?)';
 
-        dd($expression);
+        return $this->formatExpression($expression);
+    }
 
+    /**
+     * Build regex from common constants only (true, false, null, integers).
+     *
+     * @param  string $targetKey
+     * @param  array  $arrayItems
+     * @return string
+     */
+    private function buildConstantExpression($targetKey, array $arrayItems = [])
+    {
+        $expression = [];
+        $expression[] = $this->buildArrayOpeningExpression($arrayItems);
+        $expression[] = '([\'|"]' . $targetKey . '[\'|"]\s*=>\s*)';
+        $expression[] = '([tT][rR][uU][eE]|[fF][aA][lL][sS][eE]|[nN][uU][lL]{2}|[\d]+)';
+
+        return $this->formatExpression($expression);
+    }
+
+    /**
+     * Format the regex expression.
+     *
+     * @param  array $expression
+     * @return string
+     */
+    private function formatExpression(array $expression)
+    {
         return '/' . implode('', $expression) . '/';
     }
 
     /**
-     * Common constants only (true, false, null, integers)
+     * Build regex from array openin.
+     * @param  mixed $arrayItems
+     * @return string
      */
-    private function buildConstantExpression($targetKey, $arrayItems = array())
-    {
-        $expression = array();
-
-        // Opening expression for array items ($1)
-        $expression[] = $this->buildArrayOpeningExpression($arrayItems);
-
-        // The target key opening ($2)
-        $expression[] = '([\'|"]'.$targetKey.'[\'|"]\s*=>\s*)';
-
-        // The target value to be replaced ($3)
-        $expression[] = '([tT][rR][uU][eE]|[fF][aA][lL][sS][eE]|[nN][uU][lL]{2}|[\d]+)';
-
-        return '/' . implode('', $expression) . '/';
-    }
-
     private function buildArrayOpeningExpression($arrayItems)
     {
         if (count($arrayItems)) {
-            $itemOpen = array();
+            $itemOpen = [];
+
             foreach ($arrayItems as $item) {
-                // The left hand array assignment
-                $itemOpen[] = '[\'|"]'.$item.'[\'|"]\s*=>\s*(?:[aA][rR]{2}[aA][yY]\(|[\[])';
+                $itemOpen[] = '[\'|"]' . $item . '[\'|"]\s*=>\s*(?:[aA][rR]{2}[aA][yY]\(|[\[])';
             }
 
-            // Capture all opening array (non greedy)
-            $result = '(' . implode('[\s\S]*', $itemOpen) . '[\s\S]*?)';
-        } else {
-            // Gotta capture something for $1
-            $result = '()';
+            return '(' . implode('[\s\S]*', $itemOpen) . '[\s\S]*?)';
         }
 
-        return $result;
+        return '()';
     }
 }

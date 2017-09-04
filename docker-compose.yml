@@ -1,0 +1,33 @@
+# v2 syntax
+version: '2'
+
+volumes:
+  # MySQL Data
+  uds-mysql-data:
+    driver: local
+
+services:
+  # MySQL (5.7)
+  mysql:
+    image: ambientum/mysql:5.7
+    container_name: uds-mysql
+    volumes:
+      - uds-mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=uds
+      - MYSQL_DATABASE=uds
+      - MYSQL_USER=uds
+      - MYSQL_PASSWORD=uds
+
+  # PHP (with Apache)
+  app:
+    image: ambientum/php:7.0-apache
+    container_name: uds-app
+    volumes:
+      - .:/var/www/app
+    ports:
+      - "8081:8080"
+    links:
+      - mysql

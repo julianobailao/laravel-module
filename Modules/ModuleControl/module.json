@@ -11,6 +11,7 @@
     "aliases": {},
     "configs": {
         "app.providers": "Tymon\\JWTAuth\\Providers\\JWTAuthServiceProvider::class",
+        "app.providers": "Barryvdh\\Cors\\ServiceProvider::class",
         "app.aliases": "'JWTAuth' => Tymon\\JWTAuth\\Facades\\JWTAuth::class",
         "app.aliases": "'JWTFactory' => Tymon\\JWTAuth\\Facades\\JWTFactory::class",
         "auth.providers.users.model": "Modules\\ModuleControl\\Entities\\User::class",
@@ -18,12 +19,14 @@
     },
     "scripts": [
         "php artisan vendor:publish --provider=\"Tymon\\JWTAuth\\Providers\\JWTAuthServiceProvider\"",
+        "php artisan vendor:publish --provider=\"Barryvdh\\Cors\\ServiceProvider\"",
         "php artisan jwt:generate"
     ],
     "files": [
         "start.php"
     ],
     "requires": {
-        "tymon/jwt-auth": "0.5.*"
+        "tymon/jwt-auth": "0.5.*",
+        "barryvdh/laravel-cors": "0.8.*"
     }
 }

@@ -2,8 +2,12 @@
 
 Route::group([
     'middleware' => 'api',
+    'prefix' => 'api',
     'namespace' => 'Modules\ModuleControl\Http\Controllers',
-], function() {
+], function () {
+    // Authentication.
+    Route::post('/auth', 'AuthController@authenticate');
+
     // Display a listing of modules.
     Route::get('/modules', 'ModuleControlController@index');
 

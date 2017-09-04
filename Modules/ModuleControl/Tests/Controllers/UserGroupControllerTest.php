@@ -55,11 +55,11 @@ class UserGroupControllerTest extends TestCase
     {
         $userGroup = factory(UserGroup::class)->create();
         $data = factory(UserGroup::class)->make();
-        // $data->permissions = [
-        //     [
-        //         'action_id' => factory(Action::class)->create()->id,
-        //     ],
-        // ];
+        $data->permissions = [
+            [
+                'action_id' => factory(Action::class)->create()->id,
+            ],
+        ];
         $response = $this->json('PUT', sprintf('/user-groups/%s', $userGroup->id), $data->toArray());
 
         $response

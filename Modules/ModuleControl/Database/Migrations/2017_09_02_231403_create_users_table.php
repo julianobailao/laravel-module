@@ -35,6 +35,15 @@ class CreateUsersTable extends Migration
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
+
+        if (! app()->environment('production')) {
+            $userGroup = \Modules\ModuleControl\Entities\UserGroup::create(['title' => 'desenvolvimento']);
+            $userGroup->users()->create([
+                'name' => 'Desenvolvimento UDS',
+                'email' => 'desenvolvimento@uds.com.br',
+                'password' => bcrypt('teste@00!!'),
+            ]);
+        }
     }
 
     /**

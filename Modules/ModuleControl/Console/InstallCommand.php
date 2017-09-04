@@ -66,7 +66,7 @@ class InstallCommand extends Command
         $this->line('Instaling composer dependencies');
         $this->line(PHP_EOL);
         $dependencies->each(function ($version, $dependency) {
-            //$this->runProgress(sprintf('composer require %s %s', $dependency, $version ?: '*'));
+            $this->runProgress(sprintf('composer require %s %s', $dependency, $version ?: '*'));
         });
 
         return $this;

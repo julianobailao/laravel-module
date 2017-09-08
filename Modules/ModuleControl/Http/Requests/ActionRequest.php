@@ -17,6 +17,7 @@ class ActionRequest extends FormRequest
     public function rules()
     {
         return [
+            'action_group_id' => 'required|exists:action_groups,id',
             'title' => sprintf(
                 'required|unique:actions,title,%s,id',
                 isset($this->action->id) ? $this->action->id : 0

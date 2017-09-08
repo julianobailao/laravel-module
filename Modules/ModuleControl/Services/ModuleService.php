@@ -55,6 +55,18 @@ class ModuleService
         return $module;
     }
 
+    public function getCurrentModule()
+    {
+        $route = Route::getCurrentRoute();
+        $data = explode('\\', $route->getActionName());
+
+        if ($data[0] == 'Modules' && isset($data[1])) {
+            return $this->getModuleByPath($data[1]);
+        }
+
+        return false;
+    }
+
     public function checkModuleExists($path)
     {
         if (! File::exists(sprintf('%s/%s', $this->modulePath, $path))) {

@@ -13,7 +13,7 @@ class ActionControllerTest extends TestCase
     public function testReturnActionList()
     {
         $data = factory(Action::class, 10)->create();
-        $response = $this->get('/modules/actions');
+        $response = $this->get('/api/modules/actions');
 
         $response
             ->assertStatus(200)
@@ -27,7 +27,7 @@ class ActionControllerTest extends TestCase
     public function testReturnEspecifiedActionbyUuid()
     {
         $data = factory(Action::class)->create();
-        $response = $this->get(sprintf('/modules/actions/%s', $data->id));
+        $response = $this->get(sprintf('/api/modules/actions/%s', $data->id));
 
         $response
             ->assertStatus(200)
@@ -40,11 +40,11 @@ class ActionControllerTest extends TestCase
         $data->rules = [
             [
                 'module_name' => 'ModuleControl',
-                'route_uri' => 'modules',
+                'route_uri' => '/api/modules',
                 'route_method' => 'GET',
             ],
         ];
-        $response = $this->json('POST', '/modules/actions', $data->toArray());
+        $response = $this->json('POST', '/api/modules/actions', $data->toArray());
 
         $response
             ->assertStatus(201)
@@ -58,11 +58,11 @@ class ActionControllerTest extends TestCase
         $data->rules = [
             [
                 'module_name' => 'ModuleControl',
-                'route_uri' => 'modules',
+                'route_uri' => '/api/modules',
                 'route_method' => 'GET',
             ],
         ];
-        $response = $this->json('PUT', sprintf('/modules/actions/%s', $action->id), $data->toArray());
+        $response = $this->json('PUT', sprintf('/api/modules/actions/%s', $action->id), $data->toArray());
 
         $response
             ->assertStatus(200)
@@ -72,7 +72,7 @@ class ActionControllerTest extends TestCase
     public function testDestroyActionAndCheckDatabase()
     {
         $action = factory(Action::class)->create();
-        $response = $this->json('DELETE', sprintf('/modules/actions/%s', $action->id));
+        $response = $this->json('DELETE', sprintf('/api/modules/actions/%s', $action->id));
 
         $response->assertStatus(204);
         $this->assertEquals(null, Action::find($action->id));

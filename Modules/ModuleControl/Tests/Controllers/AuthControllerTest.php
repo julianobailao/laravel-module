@@ -14,7 +14,7 @@ class AuthControllerTest extends TestCase
     public function testLoginWithInvalidCredentials()
     {
         $data = factory(User::class)->make();
-        $response = $this->post('/auth', $data->toArray());
+        $response = $this->post('/api/auth', $data->toArray());
 
         $response->assertStatus(401);
     }
@@ -24,7 +24,7 @@ class AuthControllerTest extends TestCase
         $data = factory(User::class)->create();
         $payload = $data->toArray();
         $payload['password'] = 'secret';
-        $response = $this->post('/auth', $payload);
+        $response = $this->post('/api/auth', $payload);
 
         $response
             ->assertStatus(200)

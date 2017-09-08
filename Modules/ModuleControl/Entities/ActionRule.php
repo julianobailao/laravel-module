@@ -12,4 +12,9 @@ class ActionRule extends Model
     protected $fillable = [
         'module_name', 'route_uri', 'route_method'
     ];
+
+    public function action()
+    {
+        return $this->belongsTo(Action::class, 'action_id');
+    }
 }

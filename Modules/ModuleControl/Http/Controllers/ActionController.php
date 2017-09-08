@@ -69,7 +69,7 @@ class ActionController extends Controller
     private function save(Action $action, ActionRequest $request)
     {
         $update = $action->id != null;
-        $action->fill($request->only('title', 'description'))->save();
+        $action->fill($request->all())->save();
         $action->rules()->delete();
         $rules = collect($request->json('rules'))
             ->each(function ($rule) use ($action) {

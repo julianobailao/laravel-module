@@ -19,6 +19,8 @@ class ValidRouteUri implements Rule
     {
         $routes = collect(Route::getRoutes())
             ->filter(function ($route) use ($value) {
+                $value = ltrim($value, '/');
+
                 return $route->uri == $value;
             });
 

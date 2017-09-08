@@ -12,7 +12,7 @@ class Action extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'title', 'description'
+        'action_group_id', 'title', 'description'
     ];
 
     public function scopeSearch($query, $term)
@@ -27,5 +27,10 @@ class Action extends Model
     public function rules()
     {
         return $this->hasMany(ActionRule::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(ActionGroup::class, 'action_group_id');
     }
 }

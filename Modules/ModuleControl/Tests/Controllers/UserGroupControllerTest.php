@@ -14,7 +14,7 @@ class UserGroupControllerTest extends TestCase
     public function testReturnUserGroupList()
     {
         $data = factory(UserGroup::class, 10)->create();
-        $response = $this->get('/user-groups');
+        $response = $this->get('/api/user-groups');
 
         $response
             ->assertStatus(200)
@@ -28,7 +28,7 @@ class UserGroupControllerTest extends TestCase
     public function testReturnEspecifiedUserGroupbyUuid()
     {
         $data = factory(UserGroup::class)->create();
-        $response = $this->get(sprintf('/user-groups/%s', $data->id));
+        $response = $this->get(sprintf('/api/user-groups/%s', $data->id));
 
         $response
             ->assertStatus(200)
@@ -43,7 +43,7 @@ class UserGroupControllerTest extends TestCase
                 'action_id' => factory(Action::class)->create()->id,
             ],
         ];
-        $response = $this->json('POST', '/user-groups', $data->toArray());
+        $response = $this->json('POST', '/api/user-groups', $data->toArray());
         unset($data->permissions);
 
         $response
@@ -60,7 +60,7 @@ class UserGroupControllerTest extends TestCase
                 'action_id' => factory(Action::class)->create()->id,
             ],
         ];
-        $response = $this->json('PUT', sprintf('/user-groups/%s', $userGroup->id), $data->toArray());
+        $response = $this->json('PUT', sprintf('/api/user-groups/%s', $userGroup->id), $data->toArray());
 
         $response
             ->assertStatus(200)
@@ -70,7 +70,7 @@ class UserGroupControllerTest extends TestCase
     public function testDestroyUserGroupAndCheckDatabase()
     {
         $userGroup = factory(UserGroup::class)->create();
-        $response = $this->json('DELETE', sprintf('/user-groups/%s', $userGroup->id));
+        $response = $this->json('DELETE', sprintf('/api/user-groups/%s', $userGroup->id));
 
         $response->assertStatus(204);
         $this->assertEquals(null, UserGroup::find($userGroup->id));

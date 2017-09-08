@@ -8,7 +8,7 @@ class ModuleControllerTest extends TestCase
 {
     public function testShouldReturnModuleList()
     {
-        $response = $this->get('/modules');
+        $response = $this->get('/api/modules');
 
         $response
             ->assertStatus(200)
@@ -23,7 +23,7 @@ class ModuleControllerTest extends TestCase
 
     public function testShouldReturnSpecifiedModuleByPath()
     {
-        $response = $this->get('/modules/ModuleControl');
+        $response = $this->get('/api/modules/ModuleControl');
 
         $response
             ->assertStatus(200)

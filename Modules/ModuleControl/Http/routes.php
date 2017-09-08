@@ -21,5 +21,7 @@ Route::group([
     Route::resource('/user-groups', 'UserGroupController', ['except' => ['create', 'edit']]);
 
     // User resource controller.
+    Route::get('/users/table', 'UserController@frontEndTable');
+    Route::get('/users/form', 'UserController@frontEndForm');
     Route::resource('/users', 'UserController', ['except' => ['create', 'edit']]);
 });
